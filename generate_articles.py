@@ -63,6 +63,7 @@ def fetch_news(topic_info):
         description = item.get("description") or ""
         article_url = item.get("url") or ""
         source = item.get("source", {}).get("name") or "News Source"
+        published_at = item.get("publishedAt", "")
 
         if title and description and article_url:
             return {
@@ -70,73 +71,144 @@ def fetch_news(topic_info):
                 "description": description,
                 "url": article_url,
                 "source": source,
-                "publishedAt": item.get("publishedAt", "")
+                "publishedAt": published_at
             }
 
     raise Exception("No valid article found.")
+
+
+def clean_json_text(text):
+    content = text.strip()
+
+    if content.startswith("```json"):
+        content = content.replace("```json", "", 1).strip()
+
+    if content.startswith("```"):
+        content = content.replace("```", "", 1).strip()
+
+    if content.endswith("```"):
+        content = content[:-3].strip()
+
+    start = content.find("{")
+    end = content.rfind("}")
+
+    if start != -1 and end != -1:
+        content = content[start:end + 1]
+
+    return content
 
 
 def generate_learning_content(news, topic):
     prompt = f"""
 You are creating content for an English learning web app called Daily English Learning.
 
-Topic: {topic}
+Use ONLY the information below.
+Do NOT copy the original article.
+Do NOT reproduce copyrighted text.
+Create original English-learning content based on the title and description.
+
+Topic category: {topic}
 News title: {news["title"]}
 News source: {news["source"]}
 News description: {news["description"]}
 Original link: {news["url"]}
 
-Return VALID JSON ONLY.
+Important:
+- The article must be directly related to the news title and description.
+- Do not write generic text.
+- Do not mention unrelated topics.
+- If the title is about travel plug adaptors, the article must discuss travel plug adaptors, electrical safety, consumer awareness, product risk, and travel preparation.
+- Return JSON only.
+- No markdown.
+- No code block.
+- No explanation outside JSON.
 
-JSON structure:
+Return this exact JSON structure:
+
 {{
-  "article": "",
-  "summary": "",
+  "article": "8 to 12 paragraphs. Original C1-level business/news English learning article. Use paragraph breaks with \\n\\n.",
+  "summary": "15 to 20 sentences. Directly summarize the issue and implications in professional English.",
   "vocabulary": [
-    {{
-      "word": "",
-      "meaning": ""
-    }}
+    {{"word": "word 1", "meaning": "Korean meaning"}},
+    {{"word": "word 2", "meaning": "Korean meaning"}},
+    {{"word": "word 3", "meaning": "Korean meaning"}},
+    {{"word": "word 4", "meaning": "Korean meaning"}},
+    {{"word": "word 5", "meaning": "Korean meaning"}},
+    {{"word": "word 6", "meaning": "Korean meaning"}},
+    {{"word": "word 7", "meaning": "Korean meaning"}},
+    {{"word": "word 8", "meaning": "Korean meaning"}}
   ],
-  "shadowing": [],
+  "shadowing": [
+    "Sentence 1.",
+    "Sentence 2.",
+    "Sentence 3.",
+    "Sentence 4.",
+    "Sentence 5."
+  ],
   "quiz": [
     {{
-      "question": "",
-      "options": ["A","B","C","D"],
-      "answer": ""
+      "question": "Question 1",
+      "options": ["A", "B", "C", "D"],
+      "answer": "A"
+    }},
+    {{
+      "question": "Question 2",
+      "options": ["A", "B", "C", "D"],
+      "answer": "B"
+    }},
+    {{
+      "question": "Question 3",
+      "options": ["A", "B", "C", "D"],
+      "answer": "C"
+    }},
+    {{
+      "question": "Question 4",
+      "options": ["A", "B", "C", "D"],
+      "answer": "D"
+    }},
+    {{
+      "question": "Question 5",
+      "options": ["A", "B", "C", "D"],
+      "answer": "A"
     }}
   ]
 }}
-
-Requirements:
-- article: 8-12 paragraphs
-- summary: 15-20 sentences
-- vocabulary: 8 items
-- shadowing: 5 items
-- quiz: 5 questions
-- CEFR C1 English
-- Business-news style
-- No markdown
-- JSON only
 """
 
-    response = model.generate_content(prompt)
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b:free",
+        messages=[
+            {
+                "role": "system",
+                "content": "You create valid JSON only for an English learning web app. Never return markdown."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.7
+    )
 
-    content = response.text.strip()
+    content = response.choices[0].message.content
+    content = clean_json_text(content)
 
-    if content.startswith("```json"):
-        content = content.replace("```json", "")
-        content = content.replace("```", "")
-        content = content.strip()
-
-    return json.loads(content)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError as e:
+        print("AI returned invalid JSON:")
+        print(content)
+        raise e
 
 
 def normalize_date(published_at):
     if not published_at:
         return today.isoformat()
 
-    return published_at[:10]
+    try:
+        return published_at[:10]
+    except Exception:
+        return today.isoformat()
 
 
 def main():
