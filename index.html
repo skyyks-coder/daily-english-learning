@@ -17,300 +17,166 @@
 
 <div class="max-w-4xl mx-auto p-4">
 
-    <!-- HEADER -->
-    <div class="bg-blue-600 text-white rounded-2xl shadow p-6 mb-6">
+<div class="bg-blue-600 text-white rounded-2xl shadow p-6 mb-6">
+<h1 class="text-3xl font-bold">
+Daily English Learning
+</h1>
 
-        <h1 class="text-3xl font-bold">
-            Daily English Learning
-        </h1>
+<p class="mt-2 opacity-90">
+Today's Topic
+</p>
+</div>
 
-        <p id="todayTopic" class="mt-2 opacity-90">
-            Today's Topic : AI
-        </p>
+<div class="bg-white rounded-2xl shadow p-5 mb-5">
 
-    </div>
+<h2 id="articleTitle" class="text-2xl font-bold mb-3">
+Loading...
+</h2>
 
-    <!-- ARTICLE -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+<div class="text-sm text-gray-500 mb-3">
 
-        <h2 id="articleTitle"
-            class="text-2xl font-bold mb-3">
-            Loading...
-        </h2>
+Source :
+<span id="articleSource"></span>
 
-        <div class="text-sm text-gray-500 mb-3">
+|
 
-            Source :
-            <span id="articleSource"></span>
+Date :
+<span id="articleDate"></span>
 
-            |
+</div>
 
-            Date :
-            <span id="articleDate"></span>
+<a
+id="articleLink"
+target="_blank"
+class="text-blue-600 underline">
 
-        </div>
+Read Original Article
 
-        <a
-            id="articleLink"
-            target="_blank"
-            class="text-blue-600 underline">
+</a>
 
-            Read Original Article
+<div
+id="articleContent"
+class="mt-5 text-gray-700 leading-8 whitespace-pre-line max-h-[800px] overflow-y-auto">
+</div>
 
-        </a>
+</div>
 
-        <div
-            id="articleContent"
-            class="mt-5 text-gray-700 leading-7 whitespace-pre-line max-h-800px] overflow-y-auto">
-        </div>
+<div class="bg-white rounded-2xl shadow p-5 mb-5">
 
-    </div>
+<h3 class="font-bold text-xl mb-3">
+🎧 Listen Article
+</h3>
 
-    <!-- LISTEN ARTICLE -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+<button
+id="listenBtn"
+class="w-full bg-blue-600 text-white p-3 rounded-xl">
 
-        <h3 class="font-bold text-xl mb-3">
-            🎧 Listen Article
-        </h3>
+Listen Article
 
-        <button
-            id="listenBtn"
-            class="w-full bg-blue-600 text-white p-3 rounded-xl">
+</button>
 
-            Listen Article
+</div>
 
-        </button>
+<div class="bg-white rounded-2xl shadow p-5 mb-5">
 
-    </div>
+<h3 class="font-bold text-xl mb-3">
+🤖 AI Summary
+</h3>
 
-    <!-- AI SUMMARY -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+<div
+id="summaryContent"
+class="text-gray-700 leading-8 whitespace-pre-line">
+</div>
 
-        <h3 class="font-bold text-xl mb-3">
-            🤖 AI Summary
-        </h3>
+<button
+id="listenSummaryBtn"
+class="mt-4 w-full bg-indigo-600 text-white p-3 rounded-xl">
 
-        <div
-            id="summaryContent"
-            class="text-gray-700 leading-4 whitespace-pre-line text-[17px]">
-        </div>
+Listen Summary
 
-        <button
-            id="listenSummaryBtn"
-            class="mt-4 w-full bg-indigo-600 text-white p-3 rounded-xl">
+</button>
 
-            Listen Summary
-
-        </button>
-
-    </div>
-
-    <!-- VOCABULARY -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
-
-        <h3 class="font-bold text-xl mb-3">
-            📖 Vocabulary
-        </h3>
-
-        <div id="vocabularyList"></div>
-
-    </div>
-
-    <!-- SHADOWING -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
-
-        <h3 class="font-bold text-xl mb-3">
-            🎤 Shadowing
-        </h3>
-
-        <div id="currentSentence"
-             class="mb-4">
-        </div>
-
-        <button
-            id="recordBtn"
-            class="bg-green-600 text-white px-5 py-3 rounded-xl">
-
-            Start Recording
-
-        </button>
-
-    </div>
-
-    <!-- PRONUNCIATION -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
-
-        <h3 class="font-bold text-xl mb-3">
-            📊 Pronunciation Score
-        </h3>
-
-        <div id="score"
-             class="text-4xl font-bold text-green-600">
-
-            0%
-
-        </div>
-
-    </div>
-
-    <!-- REPHRASING -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
-
-        <h3 class="font-bold text-xl mb-3">
-            ✍️ Rephrasing
-        </h3>
-
-        <p id="originalSentence"
-           class="mb-3"></p>
-
-        <textarea
-            id="rephraseInput"
-            rows="5"
-            class="w-full border rounded-xl p-3"
-            placeholder="Rewrite the sentence in your own words"></textarea>
-
-        <button
-            class="mt-3 bg-purple-600 text-white px-5 py-3 rounded-xl">
-
-            Check Rephrase
-
-        </button>
-
-    </div>
-
-    <!-- QUIZ -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
-
-        <h3 class="font-bold text-xl mb-3">
-            📝 Quiz
-        </h3>
-
-        <div id="quizArea">
-            Quiz will appear here
-        </div>
-
-    </div>
-
-    <!-- PROGRESS -->
-    <div class="bg-white rounded-2xl shadow p-5 mb-5">
-
-        <h3 class="font-bold text-xl mb-3">
-            📈 Learning Progress
-        </h3>
-
-        <div id="progressStat">
-            Completed Articles : 0
-        </div>
-
-    </div>
-
-    <!-- WEEKLY REVIEW -->
-    <div
-        id="weeklyReviewBox"
-        class="bg-white rounded-2xl shadow p-5 hidden">
-
-        <h3 class="font-bold text-xl mb-3">
-            📅 Weekly Review
-        </h3>
-
-        <div id="weeklyReview"></div>
-
-    </div>
+</div>
 
 </div>
 
 <script>
+
+let article = {};
+
 fetch("articles.json")
-.then(res => res.json())
+.then(response => response.json())
 .then(data => {
 
-  const article = data[0];
+    article = data[0];
 
-  document.getElementById("articleTitle").textContent =
-      article.title;
+    document.getElementById("articleTitle").textContent =
+    article.title || "";
 
-  document.getElementById("articleSource").textContent =
-      article.source;
+    document.getElementById("articleSource").textContent =
+    article.source || "";
 
-  document.getElementById("articleDate").textContent =
-      article.date;
+    document.getElementById("articleDate").textContent =
+    article.date || "";
 
-  document.getElementById("articleLink").href =
-      article.url;
+    document.getElementById("articleLink").href =
+    article.url || "#";
 
-  document.getElementById("articleContent").textContent =
-      article.article;
+    document.getElementById("articleContent").textContent =
+    article.article || "";
 
-  document.getElementById("summaryContent").textContent =
-      article.summary;
+    document.getElementById("summaryContent").textContent =
+    article.summary || "";
 
-  document.getElementById("vocabularyList").innerHTML =
-      article.vocabulary.map(v => `
-        <div class="border-b py-2">
-          <strong>${v.word}</strong><br>
-          <span class="text-gray-600">
-            ${v.meaning}
-          </span>
-        </div>
-      `).join("");
+})
+.catch(error => {
+
+    console.error(error);
+
+    document.getElementById("articleTitle").textContent =
+    "Unable to load article.";
 
 });
-    
-document.getElementById("articleTitle").innerText =
-article.title;
-
-document.getElementById("articleSource").innerText =
-article.source;
-
-document.getElementById("articleDate").innerText =
-article.date;
-
-document.getElementById("articleLink").href =
-article.link;
-
-document.getElementById("articleContent").innerText =
-article.content;
-
-document.getElementById("summaryContent").innerText =
-article.summary;
 
 document.getElementById("listenBtn")
-.addEventListener("click", ()=>{
+.addEventListener("click", () => {
 
-const speech =
-new SpeechSynthesisUtterance(article.content);
+    if(!article.article) return;
 
-speech.lang="en-US";
+    speechSynthesis.cancel();
 
-speechSynthesis.speak(speech);
+    const speech =
+    new SpeechSynthesisUtterance(article.article);
+
+    speech.lang = "en-US";
+    speech.rate = 0.9;
+
+    speechSynthesis.speak(speech);
 
 });
 
 document.getElementById("listenSummaryBtn")
-.addEventListener("click", ()=>{
+.addEventListener("click", () => {
 
-const speech =
-new SpeechSynthesisUtterance(article.summary);
+    if(!article.summary) return;
 
-speech.lang="en-US";
+    speechSynthesis.cancel();
 
-speechSynthesis.speak(speech);
+    const speech =
+    new SpeechSynthesisUtterance(article.summary);
+
+    speech.lang = "en-US";
+    speech.rate = 0.9;
+
+    speechSynthesis.speak(speech);
 
 });
 
-if(new Date().getDay()===0){
-
-document
-.getElementById("weeklyReviewBox")
-.classList.remove("hidden");
-
-}
-
 if("serviceWorker" in navigator){
 
-navigator.serviceWorker.register(
-"service-worker.js"
-);
+    navigator.serviceWorker.register(
+    "service-worker.js"
+    );
 
 }
 
