@@ -1,222 +1,203 @@
+import os
 import json
 import datetime
-import urllib.request
-import xml.etree.ElementTree as ET
-from email.utils import parsedate_to_datetime
+import requests
+from openai import OpenAI
 
-TODAY = datetime.datetime.utcnow().date()
+NEWS_API_KEY = os.environ.get("NEWS_API_KEY")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
+if not NEWS_API_KEY:
+    raise ValueError("NEWS_API_KEY is missing.")
+
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY is missing.")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+today = datetime.datetime.utcnow().date()
+from_date = today - datetime.timedelta(days=7)
 
 DAY_TOPICS = {
     0: {
         "day": "Business",
-        "rss": "https://feeds.bbci.co.uk/news/business/rss.xml"
+        "query": "global business companies market strategy"
     },
     1: {
         "day": "Travel",
-        "rss": "https://feeds.bbci.co.uk/news/world/rss.xml"
+        "query": "travel tourism airlines hotels global destinations"
     },
     2: {
         "day": "AI",
-        "rss": "https://feeds.bbci.co.uk/news/technology/rss.xml"
+        "query": "artificial intelligence AI technology business"
     },
     3: {
         "day": "Food",
-        "rss": "https://feeds.bbci.co.uk/news/world/rss.xml"
+        "query": "food restaurants dining global food industry"
     },
     4: {
         "day": "Economy",
-        "rss": "https://feeds.bbci.co.uk/news/business/rss.xml"
+        "query": "global economy inflation interest rates markets"
     },
     5: {
         "day": "Culture",
-        "rss": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+        "query": "culture arts film music entertainment global"
     },
     6: {
         "day": "Weekly Review",
-        "rss": "https://feeds.bbci.co.uk/news/rss.xml"
+        "query": "global business technology economy culture weekly news"
     }
 }
 
 
-def fetch_rss(url):
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "Mozilla/5.0"
-        }
-    )
+def get_today_topic():
+    weekday = datetime.datetime.utcnow().weekday()
+    return DAY_TOPICS[weekday]
 
-    with urllib.request.urlopen(req, timeout=20) as response:
-        xml_data = response.read()
 
-    root = ET.fromstring(xml_data)
+def fetch_news(topic_info):
+    url = "https://newsapi.org/v2/everything"
 
-    items = root.findall(".//item")
-
-    if not items:
-        raise Exception("No RSS items found.")
-
-    item = items[0]
-
-    title = item.findtext("title", default="No title")
-    link = item.findtext("link", default="")
-    description = item.findtext("description", default="")
-    pub_date_raw = item.findtext("pubDate", default="")
-
-    try:
-        pub_date = parsedate_to_datetime(pub_date_raw).date().isoformat()
-    except Exception:
-        pub_date = TODAY.isoformat()
-
-    return {
-        "title": title,
-        "url": link,
-        "description": description,
-        "date": pub_date
+    params = {
+        "q": topic_info["query"],
+        "language": "en",
+        "sortBy": "publishedAt",
+        "from": from_date.isoformat(),
+        "pageSize": 10,
+        "apiKey": NEWS_API_KEY
     }
 
+    response = requests.get(url, params=params, timeout=30)
+    response.raise_for_status()
 
-def generate_c1_summary(title, description, topic):
-    summary = f"""
-The article discusses a recent development related to {topic.lower()}, highlighting its wider significance for readers who follow global news and business trends.
-It presents the issue as part of a broader shift rather than as an isolated event.
-The topic is connected to changing economic, technological, social, or cultural conditions.
-For English learners, the article offers useful exposure to professional news vocabulary and analytical sentence structures.
-The main idea can be understood as a reflection of how institutions, companies, consumers, or governments respond to new pressures.
-The development also shows how quickly priorities can change in a connected global environment.
-Readers can observe how formal journalism explains causes, consequences, and possible implications.
-The language used in this type of article is especially useful for building advanced reading comprehension.
-It encourages learners to move beyond basic facts and consider the context behind the news.
-The article also provides a good opportunity to practice summarizing information in a concise but sophisticated way.
-From a business-English perspective, the topic is relevant because it involves decision-making, risk, strategy, or public response.
-Learners can pay attention to verbs that describe change, influence, growth, pressure, and regulation.
-They can also notice how news writing often balances factual reporting with cautious interpretation.
-The broader significance of the article lies in how it connects present events with longer-term trends.
-Overall, the article is suitable for intermediate-to-advanced learners who want to improve their ability to read, speak, and discuss current affairs in English.
-""".strip()
+    data = response.json()
 
-    return summary
+    articles = data.get("articles", [])
 
+    if not articles:
+        raise Exception("No articles found from NewsAPI.")
 
-def generate_learning_article(news, topic):
-    article_text = f"""
-Title: {news["title"]}
+    for item in articles:
+        title = item.get("title") or ""
+        description = item.get("description") or ""
+        url = item.get("url") or ""
+        source = item.get("source", {}).get("name") or "News Source"
 
-This learning article is based on the linked news item from BBC News.
-
-Original news summary:
-{news["description"]}
-
-Learning note:
-This article should be read together with the original source link. The text below is not a reproduction of the full copyrighted article. Instead, it is a study-friendly learning version designed for English practice.
-
-The topic is relevant because it reflects current developments in {topic.lower()}. It allows learners to practice reading professional news English while also building vocabulary related to global affairs, business, technology, culture, and public policy. When reading the original article, focus on how the writer introduces the issue, explains the background, and presents the possible consequences. Pay attention to the verbs and linking expressions used to describe change, contrast, and uncertainty.
-""".strip()
-
-    return article_text
-
-
-def build_vocabulary(topic):
-    common_words = [
-        {
-            "word": "development",
-            "meaning": "전개, 발전, 새로운 상황"
-        },
-        {
-            "word": "implication",
-            "meaning": "영향, 함의"
-        },
-        {
-            "word": "context",
-            "meaning": "맥락"
-        },
-        {
-            "word": "strategy",
-            "meaning": "전략"
-        },
-        {
-            "word": "shift",
-            "meaning": "변화, 전환"
-        },
-        {
-            "word": "response",
-            "meaning": "대응, 반응"
-        },
-        {
-            "word": "trend",
-            "meaning": "추세"
-        }
-    ]
-
-    if topic == "AI":
-        common_words.extend([
-            {
-                "word": "automation",
-                "meaning": "자동화"
-            },
-            {
-                "word": "algorithm",
-                "meaning": "알고리즘"
-            },
-            {
-                "word": "governance",
-                "meaning": "관리 체계"
+        if title and description and url:
+            return {
+                "title": title,
+                "description": description,
+                "url": url,
+                "source": source,
+                "publishedAt": item.get("publishedAt", "")
             }
-        ])
 
-    if topic == "Economy":
-        common_words.extend([
+    raise Exception("No valid article found.")
+
+
+def generate_learning_content(news, topic):
+    prompt = f"""
+You are creating content for an English learning web app called Daily English Learning.
+
+Topic: {topic}
+News title: {news["title"]}
+News source: {news["source"]}
+News description: {news["description"]}
+Original link: {news["url"]}
+
+Important:
+- Do NOT reproduce the copyrighted full article.
+- Create an original learning article based only on the title and description.
+- The summary must be CEFR C1 level.
+- Style should be professional, similar to Reuters Analysis, Financial Times, or The Economist.
+- Use English only except Korean vocabulary meanings.
+- Return valid JSON only.
+- No markdown.
+- No comments.
+
+JSON structure:
+{{
+  "article": "An original study-friendly article of 8 to 12 paragraphs. It should explain the issue, background, possible implications, and useful English expressions. Do not copy the original article.",
+  "summary": "A 15 to 20 sentence C1-level professional business-news style summary.",
+  "vocabulary": [
+    {{
+      "word": "advanced English word",
+      "meaning": "Korean meaning"
+    }}
+  ],
+  "shadowing": [
+    "Sentence 1 for speaking practice.",
+    "Sentence 2 for speaking practice.",
+    "Sentence 3 for speaking practice.",
+    "Sentence 4 for speaking practice.",
+    "Sentence 5 for speaking practice."
+  ],
+  "quiz": [
+    {{
+      "question": "Multiple choice question",
+      "options": ["A", "B", "C", "D"],
+      "answer": "Correct answer"
+    }}
+  ]
+}}
+
+Requirements:
+- vocabulary: 8 items
+- shadowing: 5 sentences
+- quiz: 5 questions
+- Summary must be sophisticated but readable.
+- Avoid generic repeated sentences.
+- Make the content directly related to the news topic.
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
             {
-                "word": "inflation",
-                "meaning": "인플레이션, 물가 상승"
+                "role": "system",
+                "content": "You generate structured English learning content as valid JSON."
             },
             {
-                "word": "growth",
-                "meaning": "성장"
-            },
-            {
-                "word": "consumer demand",
-                "meaning": "소비자 수요"
+                "role": "user",
+                "content": prompt
             }
-        ])
+        ],
+        temperature=0.7
+    )
 
-    if topic == "Business":
-        common_words.extend([
-            {
-                "word": "revenue",
-                "meaning": "매출"
-            },
-            {
-                "word": "investment",
-                "meaning": "투자"
-            },
-            {
-                "word": "competitive advantage",
-                "meaning": "경쟁 우위"
-            }
-        ])
+    content = response.choices[0].message.content.strip()
 
-    return common_words[:8]
+    return json.loads(content)
+
+
+def normalize_date(published_at):
+    if not published_at:
+        return today.isoformat()
+
+    try:
+        return published_at[:10]
+    except Exception:
+        return today.isoformat()
 
 
 def main():
-    weekday = datetime.datetime.utcnow().weekday()
-    topic_info = DAY_TOPICS[weekday]
-
+    topic_info = get_today_topic()
     topic = topic_info["day"]
-    rss_url = topic_info["rss"]
 
-    news = fetch_rss(rss_url)
+    news = fetch_news(topic_info)
+    learning = generate_learning_content(news, topic)
 
     article = {
         "day": topic,
         "title": news["title"],
-        "source": "BBC News",
-        "date": news["date"],
+        "source": news["source"],
+        "date": normalize_date(news["publishedAt"]),
         "url": news["url"],
-        "article": generate_learning_article(news, topic),
-        "summary": generate_c1_summary(news["title"], news["description"], topic),
-        "vocabulary": build_vocabulary(topic)
+        "article": learning.get("article", ""),
+        "summary": learning.get("summary", ""),
+        "vocabulary": learning.get("vocabulary", []),
+        "shadowing": learning.get("shadowing", []),
+        "quiz": learning.get("quiz", [])
     }
 
     with open("articles.json", "w", encoding="utf-8") as f:
