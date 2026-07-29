@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Daily English Learning</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<div class="max-w-4xl mx-auto p-4">
+
+    <!-- HEADER -->
+    <div class="bg-blue-600 text-white rounded-2xl shadow p-6 mb-6">
+
+        <h1 class="text-3xl font-bold">
+            Daily English Learning
+        </h1>
+
+        <p id="todayTopic" class="mt-2 opacity-90">
+            Today's Topic : AI
+        </p>
+
+    </div>
+
+    <!-- ARTICLE -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h2 id="articleTitle"
+            class="text-2xl font-bold mb-3">
+            Loading...
+        </h2>
+
+        <div class="text-sm text-gray-500 mb-3">
+
+            Source :
+            <span id="articleSource"></span>
+
+            |
+
+            Date :
+            <span id="articleDate"></span>
+
+        </div>
+
+        <a
+            id="articleLink"
+            target="_blank"
+            class="text-blue-600 underline">
+
+            Read Original Article
+
+        </a>
+
+        <div
+            id="articleContent"
+            class="mt-5 text-gray-700 leading-7 whitespace-pre-line max-h-800px] overflow-y-auto">
+        </div>
+
+    </div>
+
+    <!-- LISTEN ARTICLE -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            🎧 Listen Article
+        </h3>
+
+        <button
+            id="listenBtn"
+            class="w-full bg-blue-600 text-white p-3 rounded-xl">
+
+            Listen Article
+
+        </button>
+
+    </div>
+
+    <!-- AI SUMMARY -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            🤖 AI Summary
+        </h3>
+
+        <div
+            id="summaryContent"
+            class="text-gray-700 leading-4 whitespace-pre-line text-[17px]">
+        </div>
+
+        <button
+            id="listenSummaryBtn"
+            class="mt-4 w-full bg-indigo-600 text-white p-3 rounded-xl">
+
+            Listen Summary
+
+        </button>
+
+    </div>
+
+    <!-- VOCABULARY -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            📖 Vocabulary
+        </h3>
+
+        <div id="vocabularyList"></div>
+
+    </div>
+
+    <!-- SHADOWING -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            🎤 Shadowing
+        </h3>
+
+        <div id="currentSentence"
+             class="mb-4">
+        </div>
+
+        <button
+            id="recordBtn"
+            class="bg-green-600 text-white px-5 py-3 rounded-xl">
+
+            Start Recording
+
+        </button>
+
+    </div>
+
+    <!-- PRONUNCIATION -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            📊 Pronunciation Score
+        </h3>
+
+        <div id="score"
+             class="text-4xl font-bold text-green-600">
+
+            0%
+
+        </div>
+
+    </div>
+
+    <!-- REPHRASING -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            ✍️ Rephrasing
+        </h3>
+
+        <p id="originalSentence"
+           class="mb-3"></p>
+
+        <textarea
+            id="rephraseInput"
+            rows="5"
+            class="w-full border rounded-xl p-3"
+            placeholder="Rewrite the sentence in your own words"></textarea>
+
+        <button
+            class="mt-3 bg-purple-600 text-white px-5 py-3 rounded-xl">
+
+            Check Rephrase
+
+        </button>
+
+    </div>
+
+    <!-- QUIZ -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            📝 Quiz
+        </h3>
+
+        <div id="quizArea">
+            Quiz will appear here
+        </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="bg-white rounded-2xl shadow p-5 mb-5">
+
+        <h3 class="font-bold text-xl mb-3">
+            📈 Learning Progress
+        </h3>
+
+        <div id="progressStat">
+            Completed Articles : 0
+        </div>
+
+    </div>
+
+    <!-- WEEKLY REVIEW -->
+    <div
+        id="weeklyReviewBox"
+        class="bg-white rounded-2xl shadow p-5 hidden">
+
+        <h3 class="font-bold text-xl mb-3">
+            📅 Weekly Review
+        </h3>
+
+        <div id="weeklyReview"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+const article = {
+
+title:
+"Artificial Intelligence Is Transforming Business",
+
+source:
+"Reuters",
+
+date:
+"2026-07-29",
+
+link:
+"https://www.reuters.com",
+
+content:
+`Full article content goes here...`,
+
+summary:
+`Artificial intelligence is rapidly reshaping the global business landscape.
+
+Companies across various industries are investing heavily in AI-driven solutions to improve efficiency.
+
+Many organizations use AI to automate repetitive tasks and reduce operational costs.
+
+AI technologies enable faster and more accurate analysis of large volumes of data.
+
+As a result, businesses can make more informed strategic decisions.
+
+The technology is also helping companies personalize customer experiences.
+
+AI-powered systems are increasingly being used in marketing, finance and customer support.
+
+Experts believe that organizations adopting AI early may gain a significant competitive advantage.
+
+However, concerns remain regarding privacy, data security and ethical use.
+
+Businesses must therefore establish responsible governance frameworks.
+
+Employees are also being encouraged to develop new digital skills.
+
+Many executives view AI as a tool that complements human intelligence rather than replacing it.
+
+Governments around the world are introducing regulations to guide AI development.
+
+Industry leaders expect AI adoption to accelerate in the coming years.
+
+Its long-term impact is likely to transform nearly every sector of the economy.`
+
+};
+
+document.getElementById("articleTitle").innerText =
+article.title;
+
+document.getElementById("articleSource").innerText =
+article.source;
+
+document.getElementById("articleDate").innerText =
+article.date;
+
+document.getElementById("articleLink").href =
+article.link;
+
+document.getElementById("articleContent").innerText =
+article.content;
+
+document.getElementById("summaryContent").innerText =
+article.summary;
+
+document.getElementById("listenBtn")
+.addEventListener("click", ()=>{
+
+const speech =
+new SpeechSynthesisUtterance(article.content);
+
+speech.lang="en-US";
+
+speechSynthesis.speak(speech);
+
+});
+
+document.getElementById("listenSummaryBtn")
+.addEventListener("click", ()=>{
+
+const speech =
+new SpeechSynthesisUtterance(article.summary);
+
+speech.lang="en-US";
+
+speechSynthesis.speak(speech);
+
+});
+
+if(new Date().getDay()===0){
+
+document
+.getElementById("weeklyReviewBox")
+.classList.remove("hidden");
+
+}
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register(
+"service-worker.js"
+);
+
+}
+
+</script>
+
+</body>
+</html>
