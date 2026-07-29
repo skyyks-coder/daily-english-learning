@@ -2,19 +2,21 @@ import os
 import json
 import datetime
 import requests
-import google.generativeai as genai
+from openai import OpenAI
 
 NEWS_API_KEY = os.environ.get("NEWS_API_KEY")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
 if not NEWS_API_KEY:
     raise ValueError("NEWS_API_KEY is missing.")
 
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY is missing.")
+if not OPENROUTER_API_KEY:
+    raise ValueError("OPENROUTER_API_KEY is missing.")
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.5-flash")
+client = OpenAI(
+    api_key=OPENROUTER_API_KEY,
+    base_url="https://openrouter.ai/api/v1"
+)
 
 today = datetime.datetime.utcnow().date()
 from_date = today - datetime.timedelta(days=7)
