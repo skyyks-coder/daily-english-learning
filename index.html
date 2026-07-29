@@ -220,57 +220,42 @@
 </div>
 
 <script>
+fetch("articles.json")
+.then(res => res.json())
+.then(data => {
 
-const article = {
+  const article = data[0];
 
-title:
-"Artificial Intelligence Is Transforming Business",
+  document.getElementById("articleTitle").textContent =
+      article.title;
 
-source:
-"Reuters",
+  document.getElementById("articleSource").textContent =
+      article.source;
 
-date:
-"2026-07-29",
+  document.getElementById("articleDate").textContent =
+      article.date;
 
-link:
-"https://www.reuters.com",
+  document.getElementById("articleLink").href =
+      article.url;
 
-content:
-`Full article content goes here...`,
+  document.getElementById("articleContent").textContent =
+      article.article;
 
-summary:
-`Artificial intelligence is rapidly reshaping the global business landscape.
+  document.getElementById("summaryContent").textContent =
+      article.summary;
 
-Companies across various industries are investing heavily in AI-driven solutions to improve efficiency.
+  document.getElementById("vocabularyList").innerHTML =
+      article.vocabulary.map(v => `
+        <div class="border-b py-2">
+          <strong>${v.word}</strong><br>
+          <span class="text-gray-600">
+            ${v.meaning}
+          </span>
+        </div>
+      `).join("");
 
-Many organizations use AI to automate repetitive tasks and reduce operational costs.
-
-AI technologies enable faster and more accurate analysis of large volumes of data.
-
-As a result, businesses can make more informed strategic decisions.
-
-The technology is also helping companies personalize customer experiences.
-
-AI-powered systems are increasingly being used in marketing, finance and customer support.
-
-Experts believe that organizations adopting AI early may gain a significant competitive advantage.
-
-However, concerns remain regarding privacy, data security and ethical use.
-
-Businesses must therefore establish responsible governance frameworks.
-
-Employees are also being encouraged to develop new digital skills.
-
-Many executives view AI as a tool that complements human intelligence rather than replacing it.
-
-Governments around the world are introducing regulations to guide AI development.
-
-Industry leaders expect AI adoption to accelerate in the coming years.
-
-Its long-term impact is likely to transform nearly every sector of the economy.`
-
-};
-
+});
+    
 document.getElementById("articleTitle").innerText =
 article.title;
 
